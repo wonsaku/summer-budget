@@ -35,30 +35,27 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white border-b border-[#F0E0C8] shadow-sm">
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl" style={{ color: 'var(--goguma-orange)' }}>
-            <span className="text-2xl">🍠</span>
+          <Link href="/" className="flex items-center gap-1.5 font-bold text-lg whitespace-nowrap" style={{ color: 'var(--goguma-orange)' }}>
+            <span className="text-xl">🍠</span>
             <span>고구마마켓</span>
           </Link>
-          <Link href="/products" className="hidden sm:block text-sm font-medium hover:underline" style={{ color: 'var(--goguma-brown)' }}>
+          <Link href="/products" className="text-sm font-medium hover:underline whitespace-nowrap" style={{ color: 'var(--goguma-brown)' }}>
             중고거래
           </Link>
         </div>
 
-        <nav className="flex items-center gap-3">
+        <nav className="flex items-center gap-2">
           {loading ? null : user ? (
             <>
               <Link
                 href="/sell"
-                className="px-4 py-1.5 rounded-full text-sm font-semibold text-white goguma-gradient transition-opacity hover:opacity-90"
+                className="px-3 py-1.5 rounded-full text-sm font-semibold text-white goguma-gradient transition-opacity hover:opacity-90 whitespace-nowrap"
               >
                 + 판매하기
               </Link>
-              <span className="text-sm hidden sm:block" style={{ color: 'var(--goguma-brown)' }}>
-                {user.email?.split('@')[0]}님
-              </span>
               <button
                 onClick={handleLogout}
-                className="px-4 py-1.5 rounded-full text-sm font-medium border border-[#E8D4B8] hover:bg-[#FDF6EC] transition-colors"
+                className="px-3 py-1.5 rounded-full text-sm font-medium border border-[#E8D4B8] hover:bg-[#FDF6EC] transition-colors whitespace-nowrap"
                 style={{ color: 'var(--goguma-brown)' }}
               >
                 로그아웃
@@ -68,14 +65,14 @@ export default function Header() {
             <>
               <Link
                 href="/login"
-                className="px-4 py-1.5 rounded-full text-sm font-medium border border-[#E8D4B8] hover:bg-[#FDF6EC] transition-colors"
+                className="px-3 py-1.5 rounded-full text-sm font-medium border border-[#E8D4B8] hover:bg-[#FDF6EC] transition-colors whitespace-nowrap"
                 style={{ color: 'var(--goguma-brown)' }}
               >
                 로그인
               </Link>
               <Link
                 href="/signup"
-                className="px-4 py-1.5 rounded-full text-sm font-medium text-white transition-colors goguma-gradient"
+                className="px-3 py-1.5 rounded-full text-sm font-medium text-white transition-colors goguma-gradient whitespace-nowrap"
               >
                 회원가입
               </Link>
