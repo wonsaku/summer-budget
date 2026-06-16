@@ -10,6 +10,7 @@ export type Product = {
   status: string
   created_at: string
   like_count?: number
+  comment_count?: number
   image_urls?: string[] | null
   profiles: {
     nickname: string
@@ -107,13 +108,23 @@ export default function ProductCard({ product, isLiked = false }: Props) {
               </p>
             </div>
 
-            {/* 좋아요 버튼 */}
-            <LikeButton
-              productId={product.id}
-              initialCount={product.like_count ?? 0}
-              initialLiked={isLiked}
-              size="sm"
-            />
+            {/* 댓글 수 + 좋아요 버튼 */}
+            <div className="flex items-center gap-1">
+              {(product.comment_count ?? 0) > 0 && (
+                <div className="flex items-center gap-1 px-2 py-1">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C0A090" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                  <span className="text-xs" style={{ color: '#C0A090' }}>{product.comment_count}</span>
+                </div>
+              )}
+              <LikeButton
+                productId={product.id}
+                initialCount={product.like_count ?? 0}
+                initialLiked={isLiked}
+                size="sm"
+              />
+            </div>
           </div>
         </div>
       </div>
