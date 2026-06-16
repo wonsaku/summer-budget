@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import LikeButton from './LikeButton'
 
 export type Product = {
   id: string
@@ -8,6 +9,7 @@ export type Product = {
   location: string | null
   status: string
   created_at: string
+  like_count?: number
   image_urls?: string[] | null
   profiles: {
     nickname: string
@@ -36,7 +38,12 @@ function getCategoryEmoji(category: string) {
   return map[category] ?? '📦'
 }
 
-export default function ProductCard({ product }: { product: Product }) {
+interface Props {
+  product: Product
+  isLiked?: boolean
+}
+
+export default function ProductCard({ product, isLiked = false }: Props) {
   const isSold = product.status === 'sold'
   const isReserved = product.status === 'reserved'
   const thumb = product.image_urls?.[0]
@@ -89,14 +96,24 @@ export default function ProductCard({ product }: { product: Product }) {
             </p>
           </div>
 
-          <div>
-            <p className="text-base font-bold mt-1" style={{ color: 'var(--goguma-brown)' }}>
-              {product.price.toLocaleString('ko-KR')}원
-            </p>
-            <p className="text-xs mt-1" style={{ color: '#C0A090' }}>
-              {product.location && `${product.location} · `}
-              {timeAgo(product.created_at)}
-            </p>
+          <div className="flex items-end justify-between">
+            <div>
+              <p className="text-base font-bold" style={{ color: 'var(--goguma-brown)' }}>
+                {product.price.toLocaleString('ko-KR')}원
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: '#C0A090' }}>
+                {product.location && `${product.location} · `}
+                {timeAgo(product.created_at)}
+              </p>
+            </div>
+
+            {/* 좋아요 버튼 */}
+            <LikeButton
+              productId={product.id}
+              initialCount={product.like_count ?? 0}
+              initialLiked={isLiked}
+              size="sm"
+            />
           </div>
         </div>
       </div>

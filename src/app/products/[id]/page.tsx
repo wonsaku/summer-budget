@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import OwnerActions from './OwnerActions'
 import ProductImages from './ProductImages'
+import LikeButton from '@/components/LikeButton'
 
 function timeAgo(dateStr: string) {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
@@ -51,6 +52,11 @@ export default async function ProductDetailPage({
 
   const { data: { user } } = await supabase.auth.getUser()
   const isOwner = user?.id === product.user_id
+
+  // 현재 사용자의 좋아요 여부 확인
+  const isLiked = user
+    ? !!(await supabase.from('likes').select('id').eq('user_id', user.id).eq('product_id', id).maybeSingle()).data
+    : false
 
   const { data: otherProducts } = await supabase
     .from('products')
@@ -194,7 +200,14 @@ export default async function ProductDetailPage({
             <OwnerActions productId={id} />
           ) : (
             <div className="flex items-center gap-3">
-              <div>
+              {/* 좋아요 버튼 */}
+              <LikeButton
+                productId={id}
+                initialCount={product.like_count ?? 0}
+                initialLiked={isLiked}
+                size="md"
+              />
+              <div className="flex-1">
                 <p className="text-xs" style={{ color: '#B09080' }}>가격</p>
                 <p className="text-lg font-bold" style={{ color: 'var(--goguma-brown)' }}>
                   {product.price.toLocaleString('ko-KR')}원

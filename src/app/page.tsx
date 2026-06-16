@@ -24,10 +24,12 @@ const FEATURES = [
 export default async function Home() {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+
   const [{ data: recentProducts }, { count: totalCount }] = await Promise.all([
     supabase
       .from('products')
-      .select('id, title, price, category, location, status, created_at, image_urls, profiles(nickname)')
+      .select('id, title, price, category, location, status, created_at, image_urls, like_count, profiles(nickname)')
       .eq('status', 'available')
       .order('created_at', { ascending: false })
       .limit(4),
@@ -35,6 +37,17 @@ export default async function Home() {
       .from('products')
       .select('*', { count: 'exact', head: true }),
   ])
+
+  const likedIds = new Set<string>()
+  if (user && recentProducts) {
+    const ids = recentProducts.map((p) => p.id)
+    const { data: userLikes } = await supabase
+      .from('likes')
+      .select('product_id')
+      .eq('user_id', user.id)
+      .in('product_id', ids)
+    userLikes?.forEach((l) => likedIds.add(l.product_id))
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -102,7 +115,7 @@ export default async function Home() {
             </div>
             <div className="flex flex-col gap-3">
               {(recentProducts as unknown as Product[]).map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.id} product={product} isLiked={likedIds.has(product.id)} />
               ))}
             </div>
             <div className="mt-5 text-center">

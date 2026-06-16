@@ -25,9 +25,11 @@ export default async function ProductsPage({
   const { category, sort = 'latest', q } = await searchParams
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+
   let query = supabase
     .from('products')
-    .select('id, title, price, category, location, status, created_at, image_urls, profiles(nickname)')
+    .select('id, title, price, category, location, status, created_at, image_urls, like_count, profiles(nickname)')
     .limit(60)
 
   if (category && category !== '전체') {
@@ -47,6 +49,16 @@ export default async function ProductsPage({
   }
 
   const { data: products } = await query
+
+  // 현재 사용자가 좋아요한 상품 ID 목록
+  const likedIds = new Set<string>()
+  if (user) {
+    const { data: userLikes } = await supabase
+      .from('likes')
+      .select('product_id')
+      .eq('user_id', user.id)
+    userLikes?.forEach((l) => likedIds.add(l.product_id))
+  }
 
   function buildUrl(params: Partial<SearchParams>) {
     const merged = { category, sort, q, ...params }
@@ -134,7 +146,7 @@ export default async function ProductsPage({
         {products && products.length > 0 ? (
           <div className="flex flex-col gap-3 fade-in">
             {(products as unknown as Product[]).map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.id} product={product} isLiked={likedIds.has(product.id)} />
             ))}
           </div>
         ) : (
